@@ -22,7 +22,7 @@ exports.handler = function (event, context, callback) {
         var now = Moment();
         if (now.diff(lastTrade, "minutes") < 5) {
             // currently trading
-            mainText = "Microsoft Corporation stock is currently trading at $" + quote.l_fix + " per share, " + (quote.c_fix > 0 ? "up" : "down") + " " + quote.c_fix + " points from the previous close.";
+            mainText = "Microsoft Corporation stock is currently trading at $" + quote.l_fix + " per share, " + (quote.cp_fix > 0 ? "up" : "down") + " " + quote.cp_fix + " points from the previous close.";
         }
         else {
             var calendarOptions = {
@@ -35,7 +35,7 @@ exports.handler = function (event, context, callback) {
             };
 
             // trading closed
-            mainText = "Microsoft Corporation stock closed at $" + quote.l_fix + " per share " + lastTrade.calendar(null, calendarOptions) + ", " + (quote.c_fix > 0 ? "up" : "down") + " " + quote.c_fix + " points from the previous close.";
+            mainText = "Microsoft Corporation stock closed at $" + quote.l_fix + " per share " + lastTrade.calendar(null, calendarOptions) + ", " + (quote.cp_fix > 0 ? "up" : "down") + " " + quote.cp_fix + " points from the previous close.";
         }
 
         var redirectionUrl = "https://www.google.com/finance?q=NASDAQ:MSFT";
