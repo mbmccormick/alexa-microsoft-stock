@@ -11,9 +11,13 @@ exports.handler = function (event, context, callback) {
     Stock(['MSFT'], function (error, data) {
         var quote = data[0];
 
+        var exchange = quote.e;
+        var ticker = quote.t;
         var lastTrade = Moment.tz(quote.lt_dts.slice(0, -1), "America/New_York");
+        var price = quote.l_fix;
+        var change = quote.cp_fix.replace("+", "").replace("-", "");
 
-        var uid = quote.e + ":" + quote.t + ":" + lastTrade.toISOString();
+        var uid = exchange + ":" + ticker + ":" + lastTrade.toISOString();
         var updateDate = lastTrade.toISOString();
         var titleText = "$MSFT update for " + lastTrade.format("MMMM D, YYYY [at] h:mma");
 
@@ -22,7 +26,7 @@ exports.handler = function (event, context, callback) {
         var now = Moment();
         if (now.diff(lastTrade, "minutes") < 5) {
             // currently trading
-            mainText = "Microsoft Corporation stock is currently trading at $" + quote.l_fix + " per share, " + (quote.cp_fix > 0 ? "up" : "down") + " " + quote.cp_fix + " points from the previous close.";
+            mainText = "Microsoft Corporation is currently trading at $" + price + " per share, " + (change > 0 ? "up" : "down") + " " + change + " points from the previous close.";
         }
         else {
             var calendarOptions = {
@@ -35,7 +39,7 @@ exports.handler = function (event, context, callback) {
             };
 
             // trading closed
-            mainText = "Microsoft Corporation stock closed at $" + quote.l_fix + " per share " + lastTrade.calendar(null, calendarOptions) + ", " + (quote.cp_fix > 0 ? "up" : "down") + " " + quote.cp_fix + " points from the previous close.";
+            mainText = "Microsoft Corporation closed at $" + price + " per share " + lastTrade.calendar(null, calendarOptions) + ", " + (change > 0 ? "up" : "down") + " " + change + " points from the previous close.";
         }
 
         var redirectionUrl = "https://www.google.com/finance?q=NASDAQ:MSFT";
